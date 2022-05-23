@@ -170,6 +170,7 @@ describe('cuboid create', () => {
 describe('cuboid update', () => {
   let bag: Bag;
   let cuboid: Cuboid;
+  let noBagCuboid: Cuboid;
 
   beforeEach(async () => {
     bag = await Bag.query().insert(
@@ -194,11 +195,24 @@ describe('cuboid update', () => {
         bagId: bag.id,
       })
     );
+    noBagCuboid = await Cuboid.query().insert(
+      factories.cuboid.build({
+        width: 4,
+        height: 4,
+        depth: 4,
+        bagId: -1,
+      })
+    );
   });
 
-  it('should succeed to update the cuboid', () => {
+  it('should succeed to update the cuboid', async () => {
     const [newWidth, newHeight, newDepth] = [5, 5, 5];
-    const response = { body: {} as Cuboid, status: HttpStatus.OK };
+    const response = await request(server).put('/cuboids').send({
+      id: cuboid.id,
+      width: newWidth,
+      height: newHeight,
+      depth: newDepth
+    });
     cuboid = response.body;
 
     expect(response.status).toBe(HttpStatus.OK);
@@ -208,12 +222,38 @@ describe('cuboid update', () => {
     expect(cuboid.bag?.id).toBe(bag.id);
   });
 
-  it('should fail to update if insufficient capacity and return 422 status code', () => {
+  it('should not find cuboid', async () => {
     const [newWidth, newHeight, newDepth] = [6, 6, 6];
-    const response = {
-      body: {} as Cuboid,
-      status: HttpStatus.UNPROCESSABLE_ENTITY,
-    };
+    const response = await request(server).put('/cuboids').send({
+      id: -1,
+      width: newWidth,
+      height: newHeight,
+      depth: newDepth
+    });
+
+    expect(response.status).toBe(HttpStatus.NOT_FOUND);    
+  });
+
+  it('should not find cuboid\'s bag', async () => {
+    const [newWidth, newHeight, newDepth] = [6, 6, 6];
+    const response = await request(server).put('/cuboids').send({
+      id: noBagCuboid.id,
+      width: newWidth,
+      height: newHeight,
+      depth: newDepth
+    });
+
+    expect(response.status).toBe(HttpStatus.NOT_FOUND);    
+  });
+
+  it('should fail to update if insufficient capacity and return 422 status code', async () => {
+    const [newWidth, newHeight, newDepth] = [6, 6, 6];
+    const response = await request(server).put('/cuboids').send({
+      id: cuboid.id,
+      width: newWidth,
+      height: newHeight,
+      depth: newDepth
+    });
 
     expect(response.status).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
     expect(response.body.width).not.toBe(newWidth);

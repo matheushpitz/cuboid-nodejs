@@ -64,7 +64,8 @@ export const update = async (req: Request, res: Response): Promise<Response> => 
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
 
-    if(Cuboid.getVolume(width, height, depth) > bag?.availableVolume) {
+    const volumeDif = Cuboid.getVolume(width, height, depth) - cuboid.volume;
+    if(volumeDif > bag?.availableVolume) {
       return res.sendStatus(HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }  
@@ -73,11 +74,11 @@ export const update = async (req: Request, res: Response): Promise<Response> => 
     width,
     height,
     depth
-  });
+  }).withGraphFetched('bag');
 
   return res.status(HttpStatus.OK).json(newCuboid?.toViewModel());
 };
 
 export const remove = async (req: Request, res: Response): Promise<Response> => {
-
+  return res.sendStatus(200);
 };
