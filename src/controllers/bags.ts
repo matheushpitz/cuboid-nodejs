@@ -7,7 +7,7 @@ export const list = async (req: Request, res: Response): Promise<Response> => {
   const ids = req.query.ids as Id[];
   const bags = await Bag.query().findByIds(ids).withGraphFetched('cuboids');
 
-  return res.status(200).json(bags);
+  return res.status(200).json(bags.map(x => x.toViewModel()));
 };
 
 export const get = async (req: Request, res: Response): Promise<Response> => {
@@ -18,7 +18,7 @@ export const get = async (req: Request, res: Response): Promise<Response> => {
     return res.sendStatus(HttpStatus.NOT_FOUND);
   }
 
-  return res.status(200).json(bag);
+  return res.status(200).json(bag.toViewModel());
 };
 
 export const create = async (
@@ -28,5 +28,5 @@ export const create = async (
   const { volume, title } = req.body;
   const bag = await Bag.query().insert({ volume, title });
 
-  return res.status(HttpStatus.CREATED).json(bag);
+  return res.status(HttpStatus.CREATED).json(bag?.toViewModel());
 };
