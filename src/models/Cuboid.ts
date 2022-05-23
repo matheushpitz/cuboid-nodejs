@@ -8,10 +8,29 @@ export class Cuboid extends Base {
   height!: number;
   depth!: number;
   bagId?: Id;
-  bag!: Bag;
-  volume!: number;
+  bag!: Bag;  
+
+  get volume(): number {
+    return Cuboid.getVolume(this.width, this.height, this.depth);
+  }
+
+  toViewModel(): any {
+    return {
+      id: this.id,
+      width: this.width,
+      height: this.height,
+      depth: this.depth,
+      bagId: this.bagId,
+      bag: this.bag,
+      volume: this.volume
+    }
+  }
 
   static tableName = 'cuboids';
+
+  static getVolume(width: number, height: number, depth: number): number {
+    return width * height * depth;
+  }
 
   static get relationMappings(): RelationMappings {
     return {
