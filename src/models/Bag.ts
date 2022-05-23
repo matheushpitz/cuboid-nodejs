@@ -23,7 +23,7 @@ export class Bag extends Base {
       title: this.title,
       payloadVolume: this.payloadVolume,
       availableVolume: this.availableVolume,
-      cuboids: this.cuboids
+      cuboids: this.cuboids,
     };
   }
 

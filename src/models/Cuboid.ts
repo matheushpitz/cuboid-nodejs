@@ -22,8 +22,8 @@ export class Cuboid extends Base {
       depth: this.depth,
       bagId: this.bagId,
       bag: this.bag,
-      volume: this.volume
-    }
+      volume: this.volume,
+    };
   }
 
   static tableName = 'cuboids';

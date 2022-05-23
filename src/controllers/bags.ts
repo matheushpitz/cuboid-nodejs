@@ -7,7 +7,7 @@ export const list = async (req: Request, res: Response): Promise<Response> => {
   const ids = req.query.ids as Id[];
   const bags = await Bag.query().findByIds(ids).withGraphFetched('cuboids');
 
-  return res.status(200).json(bags.map(x => x.toViewModel()));
+  return res.status(200).json(bags.map((x) => x.toViewModel()));
 };
 
 export const get = async (req: Request, res: Response): Promise<Response> => {
