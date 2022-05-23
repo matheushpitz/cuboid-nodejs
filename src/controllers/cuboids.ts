@@ -80,5 +80,13 @@ export const update = async (req: Request, res: Response): Promise<Response> => 
 };
 
 export const remove = async (req: Request, res: Response): Promise<Response> => {
-  return res.sendStatus(200);
+  const { id } = req.body;
+
+  const cuboid = await Cuboid.query().findById(id);
+  if(!cuboid) {
+    return res.sendStatus(HttpStatus.NOT_FOUND);
+  }
+
+  await Cuboid.query().deleteById(id);
+  return res.status(HttpStatus.OK).json({ id });
 };
